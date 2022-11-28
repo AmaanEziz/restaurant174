@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+<script src="../JavaScript/dish.js"></script>
+<script>
+    function onSubmit() {
+        var url = `api/dish/name/${$("#name").val()}/calories/${$("#calories").val()}/type/${$("#type option:selected").val()}`;
+        console.log("route is " + url);
+        $.ajax({
+            type: "POST",
+            url: url,
+          //  dataType: "json",
+            success: function (result, status, xhr) {
+                alert("Successfully added" + $("#name").val())
+                populateTable();
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.status + " " + status + " " + error);
+                if (xhr.status = 404) {
+                    alert("Please fill out all fields")
+                }
+                else if (xhr.status = 500) {
+                    alert("Dish with name already exists. Please use a different name")
+                }
+                else {
+                    alert("An unknown error has occured. Please try again.");
+                }
+            }
+        });
+    }
+    function populateTable() {
+        $("#dishTbody").empty();
+        $.ajax({
+            type: "GET",
+            url: "/api/dish",
+            success: function (result, status, xhr) {
+                for (var i = 0; i < result.length; i++) {
+                    $("#dishTbody").append("<tr><td>" + result[i].name + "</td><td>" + result[i].calories + "</td><td>" + result[i].type + "</td></tr>")
+                }
+            },
+            error: function (xhr, status, error) {
+               
+            }
+        }); 
+    }
+    $(document).ready(function () {
+        $("#submitDish").click(() => {
+            onSubmit()
+            populateTable()
+
+        });
+        populateTable()
+
+    })
+</script>
+<div class="text-center">
+    <h1 class="display-4">Welcome to Restaurant</h1>
+    <h2>Insert A New Dish</h2>
+    <form>
+        <input type="text" id="name" />
+        <br />
+        <input type="number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');" id="calories" />
+        <br />
+        <select id="type">
+            <option value="APPETIZER">APPETIZER</option>
+            <option value="ENTREE">ENTREE</option>
+        </select>
+    </form>
+    <button type="submit" id="submitDish">Add Dish</button>
+    <h2>Meals</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Calories</th>
+            <th>Type</th>
+        </tr>
+        <tbody id="dishTbody"> </tbody>
+    </table>
+</div>
