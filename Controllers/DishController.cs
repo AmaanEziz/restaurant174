@@ -41,6 +41,10 @@ namespace restaurant174.Controllers
         [HttpPost("name/{name}/calories/{calories}/type/{type}")]
         public IActionResult Post(string name, int calories, string type)
         {
+            if (type!="APPETIZER" && type != "ENTREE")
+            {
+                return new BadRequestResult();
+            }
             System.FormattableString preparedStatement = $@"INSERT INTO DISHES VALUES ({name},{calories},{type});";
 
             try

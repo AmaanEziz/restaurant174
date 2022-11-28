@@ -13,15 +13,18 @@
             url: url,
           //  dataType: "json",
             success: function (result, status, xhr) {
-                alert("Successfully added" + $("#name").val())
+                alert("Successfully added " + $("#name").val()+" to database.")
                 populateTable();
             },
             error: function (xhr, status, error) {
-                console.log(xhr.status + " " + status + " " + error);
-                if (xhr.status = 404) {
+                console.log("xhr status is "+xhr.status);
+                if (xhr.status == 404) {
                     alert("Please fill out all fields")
                 }
-                else if (xhr.status = 500) {
+                else if (xhr.status == 400) {
+                    alert("Type is invalid");
+                }
+                else if (xhr.status == 500) {
                     alert("Dish with name already exists. Please use a different name")
                 }
                 else {
